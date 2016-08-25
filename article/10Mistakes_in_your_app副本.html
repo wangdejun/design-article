@@ -1,0 +1,383 @@
+<html>
+<head>
+	<meta charset="utf-8">
+	<style>
+		body{
+			width:600px;
+			margin:auto;
+			font-size: 14px;
+			line-height: 1.5;
+			background-color: #eee;
+			border:1px solid #fff;
+		}
+		img{
+			width:600px;
+			height:auto;
+			margin:auto;
+		}
+		.container{
+			background-color: #fff;
+		}
+	</style>
+</head>
+<body>
+
+
+<div class="container">
+
+
+
+This article was rewritten on 3rd May, 2016. Comments relating to the original article have been removed.
+
+The way React uses components and a one-way data flow makes it ideal for describing the structure of user interfaces, however its tools for working with state are kept deliberately simple; to help remind us that React is just the View in the traditional Model-View-Controller architecture.
+
+ More from this author
+Quick Tip: What Are Factory Functions in JavaScript
+10 Lodash Features You Can Replace with ES6
+Understanding ASTs by Building Your Own Babel Plugin
+There’s nothing to stop us from building large applications with just React, but we would quickly discover that to keep our code simple, we’d need to manage our state elsewhere.
+
+Whilst there’s no official solution for dealing with application state, there are some libraries that align particularly well with React’s paradigm. Today we’ll pair React with two such libraries and use them to build a simple application.
+
+Redux
+Redux is a tiny library that acts as a container for our application state, by combining ideas from Flux and Elm. We can use Redux to manage any kind of application state, providing we stick to the following guidelines:
+
+Our state is kept in a single store
+Changes come from actions not mutations
+At the core of a Redux store is a function that takes the current application state and an action and combines them to create a new application state. We call this function a reducer.
+
+Our React components will be responsible for sending actions to our store and in turn our store will tell the components when they need to re-render.
+
+ImmutableJS
+Because Redux doesn’t allow us to mutate the application state, it can be helpful to enforce this by modeling application state with immutable data structures.
+
+ImmutableJS offers us a number of immutable data structures with mutative interfaces and they’re implemented in an efficient way, inspired by the implementations in Clojure and Scala.
+
+Demo
+We’re going to use React with Redux and ImmutableJS to build a simple todo list that allows us to add todos and toggle them between complete and incomplete.
+
+
+The code is also available on GitHub.
+
+Setup
+We’ll get started by creating a project folder and initializing a package.json file with npm init. Then we’ll install that dependencies that we’re going to need.
+
+npm install --save react react-dom redux react-redux immutable
+npm install --save-dev webpack babel-loader babel-preset-es2015 babel-preset-react
+We’ll be using JSX and ES2015, so we’ll compile our code with Babel and we’re going to do this as part of the module bundling process with Webpack.
+
+First we’ll create our Webpack configuration in webpack.config.js.
+
+module.exports = {
+  entry: './src/app.js',
+  output: {
+    path: __dirname,
+    filename: 'bundle.js'
+  },
+  module: {
+    loaders: [
+      {
+        test: /\.js$/,
+        exclude: /node_modules/,
+        loader: 'babel',
+        query: { presets: [ 'es2015', 'react' ] }
+      }
+    ]
+  }
+};
+And finally we’ll extend our package.json by adding an npm script to compile our code with source maps.
+
+"script": {
+  "build": "webpack --debug"
+}
+We’ll need to run npm run build each time we want to compile our code.
+
+React & Components
+Before we implement any components, it can be helpful to create some dummy data. This helps us get a feel for what we’re going to need our components to render.
+
+const dummyTodos = [
+  { id: 0, isDone: true,  text: 'make components' },
+  { id: 1, isDone: false, text: 'design actions' },
+  { id: 2, isDone: false, text: 'implement reducer' },
+  { id: 3, isDone: false, text: 'connect components' }
+];
+For this application, we’re only going to need two React components, <Todo /> and <TodoList />.
+
+// src/components.js
+
+import React from 'react';
+
+export function Todo(props) {
+  const { todo } = props;
+  if(todo.isDone) {
+    return <strike>{todo.text}</strike>;
+  } else {
+    return <span>{todo.text}</span>;
+  }
+}
+
+export function TodoList(props) {
+  const { todos } = props;
+  return (
+    <div className='todo'>
+      <input type='text' placeholder='Add todo' />
+      <ul className='todo__list'>
+        {todos.map(t => (
+          <li key={t.id} className='todo__item'>
+            <Todo todo={t} />
+          </li>
+        ))}
+      </ul>
+    </div>
+  );
+}
+At this point, we can test these components by creating an index.html file in the project folder and populating it with the following markup. (You can find a simple stylesheet here on GitHub).
+
+<!DOCTYPE html>
+<html>
+  <head>
+    <link rel="stylesheet" href="style.css">
+    <title>Immutable Todo</title>
+  </head>
+  <body>
+    <div id="app"></div>
+    <script src="bundle.js"></script>
+  </body>
+</html>
+We’ll also need an application entry point at src/app.js.
+
+// src/app.js
+
+import React from 'react';
+import { render } from 'react-dom';
+import { TodoList } from './components';
+
+const dummyTodos = [
+  { id: 0, isDone: true,  text: 'make components' },
+  { id: 1, isDone: false, text: 'design actions' },
+  { id: 2, isDone: false, text: 'implement reducer' },
+  { id: 3, isDone: false, text: 'connect components' }
+];
+
+render(
+  <TodoList todos={dummyTodos} />,
+  document.getElementById('app')
+);
+Compile the code with npm run build, then navigate your browser to the index.html file and make sure that it’s working.
+
+Redux & ImmutableJS
+Now that we’re happy with the user interface, we can start to think about the state behind it. Our dummy data is a great place to start from and we can easily translate it into ImmutableJS collections.
+
+import { List, Map } from 'immutable';
+
+const dummyTodos = List([
+  Map({ id: 0, isDone: true,  text: 'make components' }),
+  Map({ id: 1, isDone: false, text: 'design actions' }),
+  Map({ id: 2, isDone: false, text: 'implement reducer' }),
+  Map({ id: 3, isDone: false, text: 'connect components' })
+]);
+ImmutableJS maps don’t work in the same way as JavaScript’s objects, so we’ll need to make some slight tweaks to our components. Anywhere there was a property access before (e.g. todo.id) needs to become a method call instead (todo.get('id')).
+
+Designing Actions
+Now that we’ve got the shape and structure figured out, we can start thinking about the actions that will update it. In this case, we’ll only need two actions, one to add a new todo and the other to toggle an existing one.
+
+Let’s define some functions to create these actions.
+
+// src/actions.js
+
+// succinct hack for generating passable unique ids
+const uid = () => Math.random().toString(34).slice(2);
+
+export function addTodo(text) {
+  return {
+    type: 'ADD_TODO',
+    payload: {
+      id: uid(),
+      isDone: false,
+      text: text
+    }
+  };
+}
+
+export function toggleTodo(id) {
+  return {
+    type: 'TOGGLE_TODO',
+    payload: id
+  }
+}
+Each action is just a JavaScript object with a type and payload properties. The type property helps us decide what to do with the payload when we process the action later.
+
+Designing a Reducer
+Now that we know the shape of our state and the actions that update it, we can build our reducer. Just as a reminder, the reducer is a function which takes a state and an action, then uses them to compute a new state.
+
+Here’s the initial structure for our reducer.
+
+// src/reducer.js
+
+import { List, Map } from 'immutable';
+
+const init = List([]);
+
+export default function(todos=init, action) {
+  switch(action.type) {
+    case 'ADD_TODO':
+      // ...
+    case 'TOGGLE_TODO':
+      // ...
+    default:
+      return todos;
+  }
+}
+Handling the ADD_TODO action is quite simple, as we can use the .push() method, which will return a new list with the todo appended at the end.
+
+case 'ADD_TODO':
+  return todos.push(Map(action.payload));
+Notice that we’re also converting the todo object into an immutable map before it’s pushed onto the list.
+
+The more complex action we need to handle is TOGGLE_TODO.
+
+case 'TOGGLE_TODO':
+  return todos.map(t => {
+    if(t.get('id') === action.payload) {
+      return t.update('isDone', isDone => !isDone);
+    } else {
+      return t;
+    }
+  });
+We’re using .map() to iterate over the list and find the todo whose id matches the action. Then we call .update() method, which takes a key and a function, then it returns a new copy of the map, with the value at the key replaced with the result of passing the initial value to the update function.
+
+It might help to see the literal version.
+
+const todo = Map({ id: 0, text: 'foo', isDone: false });
+todo.update('isDone', isDone => !isDone);
+// => { id: 0, text: 'foo', isDone: true }
+Connecting Everything
+Now we’ve got our actions and reducer ready, we can create a store and connect it to our React components.
+
+// src/app.js
+
+import React from 'react';
+import { render } from 'react-dom';
+import { createStore } from 'redux';
+import { TodoList } from './components';
+import reducer from './reducer';
+
+const store = createStore(reducer);
+
+render(
+  <TodoList todos={store.getState()} />,
+  document.getElementById('app')
+);
+We’ll need to make our components aware of this store. We’ll use the react-redux to help simplify this process. It allows us to create store-aware containers that wrap around our components, so that we don’t have to change our original implementations.
+
+We’re going to need a container around our <TodoList /> component. Let’s see what this looks like.
+
+// src/containers.js
+
+import { connect } from 'react-redux';
+import * as components from './components';
+import { addTodo, toggleTodo } from './actions';
+
+export const TodoList = connect(
+  function mapStateToProps(state) {
+    // ...
+  },
+  function mapDispatchToProps(dispatch) {
+    // ...
+  }
+)(components.TodoList);
+We create containers with the connect function. When we call connect() we pass two functions, mapStateToProps() and mapDispatchToProps().
+
+The mapStateToProps function takes the store’s current state as an argument (in our case a list of todos), then it expects the return value to be an object that describes a mapping from that state to props for our wrapped component.
+
+function mapStateToProps(state) {
+  return { todos: state };
+}
+It might help to visualize this on an instance of the wrapped React component.
+
+<TodoList todos={state} />
+We’ll also need to supply a mapDispatchToProps function, which is passed the store’s dispatch method, so that we can use it to dispatch the actions from our action creators.
+
+function mapDispatchToProps(dispatch) {
+  return {
+    addTodo: text => dispatch(addTodo(text)),
+    toggleTodo: id => dispatch(toggleTodo(id))
+  };
+}
+Again, it might help to visualize all these props together on an instance of our wrapped React component.
+
+<TodoList todos={state}
+          addTodo={text => dispatch(addTodo(text))}
+          toggleTodo={id => dispatch(toggleTodo(id))} />
+Now that we’ve mapped our component knows about the action creators, we can call them from event listeners.
+
+export function TodoList(props) {
+  const { todos, toggleTodo, addTodo } = props;
+
+  const onSubmit = (event) => {
+    const input = event.target;
+    const text = input.value;
+    const isEnterKey = (event.which == 13);
+    const isLongEnough = text.length > 0;
+
+    if(isEnterKey && isLongEnough) {
+      input.value = '';
+      addTodo(text);
+    }
+  };
+
+  const toggleClick = id => event => toggleTodo(id);
+
+  return (
+    <div className='todo'>
+      <input type='text'
+             className='todo__entry'
+             placeholder='Add todo'
+             onKeyDown={onSubmit} />
+      <ul className='todo__list'>
+        {todos.map(t => (
+          <li key={t.get('id')}
+              className='todo__item'
+              onClick={toggleClick(t.get('id'))}>
+            <Todo todo={t.toJS()} />
+          </li>
+        ))}
+      </ul>
+    </div>
+  );
+}
+The containers will automatically subscribe to changes in the store and they will re-render the wrapped components whenever their mapped props change.
+
+Finally, we need to make the containers aware of the store, using the <Provider /> component.
+
+// src/app.js
+
+import React from 'react';
+import { render } from 'react-dom';
+import { createStore } from 'redux';
+import { Provider } from 'react-redux';
+import reducer from './reducer';
+import { TodoList } from './containers';
+//                          ^^^^^^^^^^
+
+const store = createStore(reducer);
+
+render(
+  <Provider store={store}>
+    <TodoList />
+  </Provider>,
+  document.getElementById('app')
+);
+Conclusion
+There’s no denying that the ecosystem around React and Redux can be quite complex and intimidating for beginners, but the good news is that almost all of these concepts are transferable. We’ve barely touched the surface of Redux’s architecture, but already we’ve seen enough to help us start learning about The Elm Architecture, or pick up a ClojureScript library like Om or Re-frame. Likewise, we’ve only seen a fragment of the possibilities with immutable data, but now we’re better equipped to start learning a language like Clojure or Haskell.
+
+Whether you’re just exploring the state of web application development, or you spend all day writing JavaScript; experience with action based architectures and immutable data is already becoming a vital skill for developers and right now is a great time to be learning the essentials.
+</div>
+</body>
+</html>
+
+
+
+
+
+
