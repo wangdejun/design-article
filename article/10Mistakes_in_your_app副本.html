@@ -26,47 +26,50 @@
 <div class="container">
 
 
+<h2>How to Build a Todo App Using React, Redux, and Immutable.js</h2>
 
-This article was rewritten on 3rd May, 2016. Comments relating to the original article have been removed.
+<em>By Dan Prince  May 03, 2016</em>
 
-The way React uses components and a one-way data flow makes it ideal for describing the structure of user interfaces, however its tools for working with state are kept deliberately simple; to help remind us that React is just the View in the traditional Model-View-Controller architecture.
+<p>This article was rewritten on 3rd May, 2016. Comments relating to the original article have been removed.</p>
 
-More from this author
-Quick Tip: What Are Factory Functions in JavaScript
-10 Lodash Features You Can Replace with ES6
-Understanding ASTs by Building Your Own Babel Plugin
-There’s nothing to stop us from building large applications with just React, but we would quickly discover that to keep our code simple, we’d need to manage our state elsewhere.
+<p>The way React uses components and a one-way data flow makes it ideal for describing the structure of user interfaces, however its tools for working with state are kept deliberately simple; to help remind us that React is just the View in the traditional Model-View-Controller architecture.</p>
 
-Whilst there’s no official solution for dealing with application state, there are some libraries that align particularly well with React’s paradigm. Today we’ll pair React with two such libraries and use them to build a simple application.
+<p>There’s nothing to stop us from building large applications with just React, but we would quickly discover that to keep our code simple, we’d need to manage our state elsewhere.</p>
+
+<p>Whilst there’s no official solution for dealing with application state, there are some libraries that align particularly well with React’s paradigm. Today we’ll pair React with two such libraries and use them to build a simple application.</p>
 
 <h3>Redux</h3>
-Redux is a tiny library that acts as a container for our application state, by combining ideas from Flux and Elm. We can use Redux to manage any kind of application state, providing we stick to the following guidelines:
+<p>Redux is a tiny library that acts as a container for our application state, by combining ideas from Flux and Elm. We can use Redux to manage any kind of application state, providing we stick to the following guidelines:</p>
 
 Our state is kept in a single store
 Changes come from actions not mutations
 At the core of a Redux store is a function that takes the current application state and an action and combines them to create a new application state. We call this function a reducer.
 
-Our React components will be responsible for sending actions to our store and in turn our store will tell the components when they need to re-render.
+<p>Our React components will be responsible for sending actions to our store and in turn our store will tell the components when they need to re-render.</p>
 
 <h3>ImmutableJS</h3>
-Because Redux doesn’t allow us to mutate the application state, it can be helpful to enforce this by modeling application state with immutable data structures.
+<p>Because Redux doesn’t allow us to mutate the application state, it can be helpful to enforce this by modeling application state with immutable data structures.</p>
 
-ImmutableJS offers us a number of immutable data structures with mutative interfaces and they’re implemented in an efficient way, inspired by the implementations in Clojure and Scala.
+<p>ImmutableJS offers us a number of immutable data structures with mutative interfaces and they’re implemented in an efficient way, inspired by the implementations in Clojure and Scala.</p>
 
 <h3>Demo</h3>
-We’re going to use React with Redux and ImmutableJS to build a simple todo list that allows us to add todos and toggle them between complete and incomplete.
+<p>We’re going to use React with Redux and ImmutableJS to build a simple todo list that allows us to add todos and toggle them between complete and incomplete.</p>
 
 
-The code is also available on GitHub.
+<p>The code is also available on GitHub.</p>
 
 <h3>Setup</h3>
-We’ll get started by creating a project folder and initializing a package.json file with npm init. Then we’ll install that dependencies that we’re going to need.
+<p>We’ll get started by creating a project folder and initializing a package.json file with npm init. Then we’ll install that dependencies that we’re going to need.</p>
 
+<blockquote>
 npm install --save react react-dom redux react-redux immutable
 npm install --save-dev webpack babel-loader babel-preset-es2015 babel-preset-react
-We’ll be using JSX and ES2015, so we’ll compile our code with Babel and we’re going to do this as part of the module bundling process with Webpack.
+</blockquote>
+
+<p>We’ll be using JSX and ES2015, so we’ll compile our code with Babel and we’re going to do this as part of the module bundling process with Webpack.</p>
 
 First we’ll create our Webpack configuration in webpack.config.js.
+
 <blockquote>
 module.exports = {
   entry: './src/app.js',
@@ -86,15 +89,20 @@ module.exports = {
   }
 };
 </blockquote>
-And finally we’ll extend our package.json by adding an npm script to compile our code with source maps.
 
+<p>And finally we’ll extend our package.json by adding an npm script to compile our code with source maps.<p>
+<blockquote cite="">
 "script": {
   "build": "webpack --debug"
 }
+</blockquote>
+
 We’ll need to run npm run build each time we want to compile our code.
 
-React & Components
-Before we implement any components, it can be helpful to create some dummy data. This helps us get a feel for what we’re going to need our components to render.
+<h3>React & Components</h3>
+
+<p>Before we implement any components, it can be helpful to create some dummy data. This helps us get a feel for what we’re going to need our components to render.></p>
+
 <blockquote>
 const dummyTodos = [
   { id: 0, isDone: true,  text: 'make components' },
@@ -103,10 +111,11 @@ const dummyTodos = [
   { id: 3, isDone: false, text: 'connect components' }
 ];
 </blockquote>
-For this application, we’re only going to need two React components, <Todo /> and <TodoList />.
+
+<p>For this application, we’re only going to need two React components, <Todo /> and <TodoList />.</p>
+
 <blockquote>
 // src/components.js
-
 import React from 'react';
 
 export function Todo(props) {
@@ -134,7 +143,9 @@ export function TodoList(props) {
   );
 }
 </blockquote>
-At this point, we can test these components by creating an index.html file in the project folder and populating it with the following markup. (You can find a simple stylesheet here on GitHub).
+
+<p>At this point, we can test these components by creating an index.html file in the project folder and populating it with the following markup. (You can find a simple stylesheet here on GitHub).</p>
+
 <blockquote>
 <!DOCTYPE html>
 <html>
@@ -148,7 +159,9 @@ At this point, we can test these components by creating an index.html file in th
   </body>
 </html>
 </blockquote>
-We’ll also need an application entry point at src/app.js.
+
+<p>We’ll also need an application entry point at src/app.js.</p>
+
 <blockquote>
 // src/app.js
 
@@ -170,8 +183,9 @@ render(
 </blockquote>
 Compile the code with npm run build, then navigate your browser to the index.html file and make sure that it’s working.
 
-Redux & ImmutableJS
-Now that we’re happy with the user interface, we can start to think about the state behind it. Our dummy data is a great place to start from and we can easily translate it into ImmutableJS collections.
+<h3>Redux & ImmutableJS</h3>
+
+<p>Now that we’re happy with the user interface, we can start to think about the state behind it. Our dummy data is a great place to start from and we can easily translate it into ImmutableJS collections.</p>
 <blockquote>
 import { List, Map } from 'immutable';
 
@@ -182,12 +196,14 @@ const dummyTodos = List([
   Map({ id: 3, isDone: false, text: 'connect components' })
 ]);
 </blockquote>
-ImmutableJS maps don’t work in the same way as JavaScript’s objects, so we’ll need to make some slight tweaks to our components. Anywhere there was a property access before (e.g. todo.id) needs to become a method call instead (todo.get('id')).
 
-Designing Actions
-Now that we’ve got the shape and structure figured out, we can start thinking about the actions that will update it. In this case, we’ll only need two actions, one to add a new todo and the other to toggle an existing one.
+<p>ImmutableJS maps don’t work in the same way as JavaScript’s objects, so we’ll need to make some slight tweaks to our components. Anywhere there was a property access before (e.g. todo.id) needs to become a method call instead (todo.get('id')).</p>
 
-Let’s define some functions to create these actions.
+<h3>Designing Actions</h3>
+<p>Now that we’ve got the shape and structure figured out, we can start thinking about the actions that will update it. In this case, we’ll only need two actions, one to add a new todo and the other to toggle an existing one.</p>
+
+<p>Let’s define some functions to create these actions.</p>
+
 <blockquote>
 // src/actions.js
 
@@ -384,7 +400,7 @@ render(
   document.getElementById('app')
 );
 </blockquote>
-Conclusion
+<h3>Conclusion</h3>
 There’s no denying that the ecosystem around React and Redux can be quite complex and intimidating for beginners, but the good news is that almost all of these concepts are transferable. We’ve barely touched the surface of Redux’s architecture, but already we’ve seen enough to help us start learning about The Elm Architecture, or pick up a ClojureScript library like Om or Re-frame. Likewise, we’ve only seen a fragment of the possibilities with immutable data, but now we’re better equipped to start learning a language like Clojure or Haskell.
 
 Whether you’re just exploring the state of web application development, or you spend all day writing JavaScript; experience with action based architectures and immutable data is already becoming a vital skill for developers and right now is a great time to be learning the essentials.
