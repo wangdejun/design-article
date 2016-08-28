@@ -8,8 +8,8 @@ export const TodoList = connect(
   },
   function mapDispatchToProps(dispatch) {
     return {
-        addTodo: text => dispatch(addTodo(text)),
-        toggleTodo: id => dispatch(toggleTodo(id))
+      addTodo: text => dispatch(addTodo(text)),
+      toggleTodo: id => dispatch(toggleTodo(id))
     };
   }
 )(components.TodoList);

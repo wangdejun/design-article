@@ -64,6 +64,10 @@
 
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
+	//                          ^^^^^^^^^^
+
+	// src/app.js
+
 	var store = (0, _redux.createStore)(_reducer2.default);
 
 	(0, _reactDom.render)(_react2.default.createElement(
@@ -23007,7 +23011,7 @@
 	        case 'TOGGLE_TODO':
 	            return todos.map(function (t) {
 	                if (t.get('id') === action.payload) {
-	                    return t.update('isDone', function (idDone) {
+	                    return t.update('isDone', function (isDone) {
 	                        return !isDone;
 	                    });
 	                } else {
@@ -23021,7 +23025,7 @@
 
 	var _immutable = __webpack_require__(196);
 
-	var init = (0, _immutable.List)([]);
+	var init = (0, _immutable.List)([]); // src/reducer.js
 
 /***/ },
 /* 196 */
@@ -28016,7 +28020,7 @@
 	Object.defineProperty(exports, "__esModule", {
 	  value: true
 	});
-	exports.TodoList = undefined;
+	exports.TodoList = TodoList;
 
 	var _reactRedux = __webpack_require__(186);
 
@@ -28028,27 +28032,61 @@
 
 	function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj.default = obj; return newObj; } }
 
-	var TodoList = exports.TodoList = (0, _reactRedux.connect)(function mapStateToProps(state) {
-	  return { todos: state };
-	}, function mapDispatchToProps(dispatch) {
-	  return {
-	    addTodo: function addTodo(text) {
-	      return dispatch((0, _actions.addTodo)(text));
-	    },
-	    toggleTodo: function toggleTodo(id) {
-	      return dispatch((0, _actions.toggleTodo)(id));
+	function TodoList(props) {
+	  var todos = props.todos;
+	  var toggleTodo = props.toggleTodo;
+	  var addTodo = props.addTodo;
+
+
+	  var onSubmit = function onSubmit(event) {
+	    var input = event.target;
+	    var text = input.value;
+	    var isEnterKey = event.which == 13;
+	    var isLongEnough = text.length > 0;
+
+	    if (isEnterKey && isLongEnough) {
+	      input.value = '';
+	      addTodo(text);
 	    }
 	  };
-	})(components.TodoList);
+
+	  var toggleClick = function toggleClick(id) {
+	    return function (event) {
+	      return toggleTodo(id);
+	    };
+	  };
+
+	  return React.createElement(
+	    'div',
+	    { className: 'todo' },
+	    React.createElement('input', { type: 'text',
+	      className: 'todo__entry',
+	      placeholder: 'Add todo',
+	      onKeyDown: onSubmit }),
+	    React.createElement(
+	      'ul',
+	      { className: 'todo__list' },
+	      todos.map(function (t) {
+	        return React.createElement(
+	          'li',
+	          { key: t.get('id'),
+	            className: 'todo__item',
+	            onClick: toggleClick(t.get('id')) },
+	          React.createElement(Todo, { todo: t.toJS() })
+	        );
+	      })
+	    )
+	  );
+	}
 
 /***/ },
 /* 198 */
 /***/ function(module, exports, __webpack_require__) {
 
-	"use strict";
+	'use strict';
 
 	Object.defineProperty(exports, "__esModule", {
-	    value: true
+	  value: true
 	});
 	exports.Todo = Todo;
 	exports.TodoList = TodoList;
@@ -28060,68 +28098,42 @@
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 	function Todo(props) {
-	    var todo = props.todo;
+	  var todo = props.todo;
 
-	    if (todo.isDone) {
-	        return _react2.default.createElement(
-	            "strike",
-	            null,
-	            todo.text
-	        );
-	    } else {
-	        return _react2.default.createElement(
-	            "span",
-	            null,
-	            todo.text
-	        );
-	    }
-	}
+	  if (todo.isDone) {
+	    return _react2.default.createElement(
+	      'strike',
+	      null,
+	      todo.text
+	    );
+	  } else {
+	    return _react2.default.createElement(
+	      'span',
+	      null,
+	      todo.text
+	    );
+	  }
+	} // src/components.js
 
 	function TodoList(props) {
-	    var todos = props.todos;
-	    var toggleTodo = props.toggleTodo;
-	    var addTodo = props.addTodo;
+	  var todos = props.todos;
 
-
-	    var onSubmit = function onSubmit(event) {
-	        var input = event.target;
-	        var text = input.value;
-	        var isEnterKey = event.which == 13;
-	        var isLongEnough = text.length > 0;
-
-	        if (isEnterKey && isLongEnough) {
-	            input.value = "";
-	            addTodo(text);
-	        }
-	    };
-
-	    var toggleClick = function toggleClick(id) {
-	        return function (event) {
-	            return toggleTodo(id);
-	        };
-	    };
-
-	    return _react2.default.createElement(
-	        "div",
-	        { className: "todo" },
-	        _react2.default.createElement("input", { type: "text",
-	            className: "tod__entry",
-	            placeholder: "Add todo",
-	            onKeyDown: onSubmit }),
-	        _react2.default.createElement(
-	            "ul",
-	            { className: "todo__list" },
-	            todos.map(function (t) {
-	                return _react2.default.createElement(
-	                    "li",
-	                    { key: t.get(id),
-	                        className: "todo__item",
-	                        onClick: toggleClick(t.get('id')) },
-	                    _react2.default.createElement(Todo, { todo: t.toJS() })
-	                );
-	            })
-	        )
-	    );
+	  return _react2.default.createElement(
+	    'div',
+	    { className: 'todo' },
+	    _react2.default.createElement('input', { type: 'text', placeholder: 'Add todo' }),
+	    _react2.default.createElement(
+	      'ul',
+	      { className: 'todo__list' },
+	      todos.map(function (t) {
+	        return _react2.default.createElement(
+	          'li',
+	          { key: t.id, className: 'todo__item' },
+	          _react2.default.createElement(Todo, { todo: t })
+	        );
+	      })
+	    )
+	  );
 	}
 
 /***/ },
@@ -28131,30 +28143,33 @@
 	'use strict';
 
 	Object.defineProperty(exports, "__esModule", {
-	    value: true
+	  value: true
 	});
 	exports.addTodo = addTodo;
 	exports.toggleTodo = toggleTodo;
+	// src/actions.js
+
+	// succinct hack for generating passable unique ids
 	var uid = function uid() {
-	    return Math.random().toString(34).slice(2);
+	  return Math.random().toString(34).slice(2);
 	};
 
 	function addTodo(text) {
-	    return {
-	        type: 'ADD_TODO',
-	        payload: {
-	            id: uid(),
-	            idDone: false,
-	            text: text
-	        }
-	    };
+	  return {
+	    type: 'ADD_TODO',
+	    payload: {
+	      id: uid(),
+	      isDone: false,
+	      text: text
+	    }
+	  };
 	}
 
 	function toggleTodo(id) {
-	    return {
-	        type: 'TOGGLE_TODO',
-	        payload: id
-	    };
+	  return {
+	    type: 'TOGGLE_TODO',
+	    payload: id
+	  };
 	}
 
 /***/ }
