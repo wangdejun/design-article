@@ -26,31 +26,59 @@
 <div class="container">
 
 
-<h2>How to Build a Todo App Using React, Redux, and Immutable.js</h2>
+<h2>How to Build a Todo App Using React, Redux, and Immutable.js
+如何用Redux,React和Immutable.js搭建一个最简单的应用
+</h2>
 
-<em>By Dan Prince  May 03, 2016</em>
+<em>By Dan Prince  May 03, 2016
+    翻译：王德军，转载注明出处。
+</em>
 
-<p>This article was rewritten on 3rd May, 2016. Comments relating to the original article have been removed.</p>
+<p>This article was rewritten on 3rd May, 2016. Comments relating to the original article have been removed.
+这篇文章重写与2016年5月3日。原有文章的评论已经被删除。
+</p>
 
 <p>The way React uses components and a one-way data flow makes it ideal for describing the structure of user interfaces, however its tools for working with state are kept deliberately simple; to help remind us that React is just the View in the traditional Model-View-Controller architecture.</p>
 
+<p>凭借组件化和单向数据流的思想，React成为搭建用户界面的理想方式，处理state的工具却被刻意的保持得非常简单，这是我们意识到React只是MVC架构的View层</p>
+
 <p>There’s nothing to stop us from building large applications with just React, but we would quickly discover that to keep our code simple, we’d need to manage our state elsewhere.</p>
+
+<p>组织我们使用React,我们突然发现保持我们的代码简洁，在其他地方维护我们的状态</p>
 
 <p>Whilst there’s no official solution for dealing with application state, there are some libraries that align particularly well with React’s paradigm. Today we’ll pair React with two such libraries and use them to build a simple application.</p>
 
+<p>
+  没有现成的官方解决方案，
+</p>
 <h3>Redux</h3>
 <p>Redux is a tiny library that acts as a container for our application state, by combining ideas from Flux and Elm. We can use Redux to manage any kind of application state, providing we stick to the following guidelines:</p>
 
+<p>
+  Redux是一个小型库，用以保存state的容器，结合了Flux和Elm的思想。我们可以使用Redux管理任何一个应用的state。只要我们坚持下面的三条原则。
+</p>
+<ul>
 Our state is kept in a single store
+我们的state保存在store里
 Changes come from actions not mutations
+数据变化来源于交互动作而不是计算
 At the core of a Redux store is a function that takes the current application state and an action and combines them to create a new application state. We call this function a reducer.
-
+一个Redux store的核心就是一个函数，接收应用现在的state和一个交互动作，并产生一个新的state
+</ul>
 <p>Our React components will be responsible for sending actions to our store and in turn our store will tell the components when they need to re-render.</p>
+<p>
+  我们的React组件用来发送Action到Store里，反过来，Store告诉组件应该什么时候重新渲染。
+</p>
 
 <h3>ImmutableJS</h3>
 <p>Because Redux doesn’t allow us to mutate the application state, it can be helpful to enforce this by modeling application state with immutable data structures.</p>
+<p>
+  因为Redux不允许我们改变state，强制使用不可变数据结构
+</p>
 
 <p>ImmutableJS offers us a number of immutable data structures with mutative interfaces and they’re implemented in an efficient way, inspired by the implementations in Clojure and Scala.</p>
+
+<p>Immutable 提供给我们一系列不可变数据结构with mutative interfaces and 用一种高效的方式来实现的。受到了Clojure和Scala的启发</p>
 
 <h3>Demo</h3>
 <p>We’re going to use React with Redux and ImmutableJS to build a simple todo list that allows us to add todos and toggle them between complete and incomplete.</p>
@@ -70,7 +98,9 @@ npm install --save-dev webpack babel-loader babel-preset-es2015 babel-preset-rea
 
 First we’ll create our Webpack configuration in webpack.config.js.
 
+
 <blockquote>
+//webpack.config.js.
 module.exports = {
   entry: './src/app.js',
   output: {
@@ -90,8 +120,10 @@ module.exports = {
 };
 </blockquote>
 
-<p>And finally we’ll extend our package.json by adding an npm script to compile our code with source maps.<p>
-<blockquote cite="">
+<p>
+  And finally we’ll extend our package.json by adding an npm script to compile our code with source maps.
+<p>
+<blockquote>
 "script": {
   "build": "webpack --debug"
 }
@@ -103,6 +135,10 @@ We’ll need to run npm run build each time we want to compile our code.
 
 <p>Before we implement any components, it can be helpful to create some dummy data. This helps us get a feel for what we’re going to need our components to render.></p>
 
+<p>
+  在我们创建组件之前，先模拟一组假数据，这对我们将要渲染什么样的数据是有一个大概的印象。
+<p>
+
 <blockquote>
 const dummyTodos = [
   { id: 0, isDone: true,  text: 'make components' },
@@ -112,10 +148,13 @@ const dummyTodos = [
 ];
 </blockquote>
 
-<p>For this application, we’re only going to need two React components, <Todo /> and <TodoList />.</p>
+<p>For this application, we’re only going to need two React components, <Todo /> and <TodoList />.
+对本例的应用，我们只需要两个组件。<Todo />和<TodoList/>
+</p>
 
 <blockquote>
 // src/components.js
+
 import React from 'react';
 
 export function Todo(props) {
@@ -146,7 +185,12 @@ export function TodoList(props) {
 
 <p>At this point, we can test these components by creating an index.html file in the project folder and populating it with the following markup. (You can find a simple stylesheet here on GitHub).</p>
 
+<p>
+  这里，我们创建一个index.html文件来测试这些组件。
+</p>
+
 <blockquote>
+
 <!DOCTYPE html>
 <html>
   <head>
@@ -158,9 +202,11 @@ export function TodoList(props) {
     <script src="bundle.js"></script>
   </body>
 </html>
+
 </blockquote>
 
 <p>We’ll also need an application entry point at src/app.js.</p>
+<p>在src/app.js设置应用入口</p>
 
 <blockquote>
 // src/app.js
@@ -181,11 +227,16 @@ render(
   document.getElementById('app')
 );
 </blockquote>
+
 Compile the code with npm run build, then navigate your browser to the index.html file and make sure that it’s working.
 
 <h3>Redux & ImmutableJS</h3>
 
-<p>Now that we’re happy with the user interface, we can start to think about the state behind it. Our dummy data is a great place to start from and we can easily translate it into ImmutableJS collections.</p>
+<p>Now that we’re happy with the user interface, we can start to think about the state behind it. 
+  
+  Our dummy data is a great place to start from and we can easily translate it into ImmutableJS collections.</p>
+<p>现在我们看到这个用户界面很高兴，我们开始思考这些界面背后的state,从模拟数据开始，来思考如何转化成ImmutableJS集合</p>
+
 <blockquote>
 import { List, Map } from 'immutable';
 
@@ -199,14 +250,15 @@ const dummyTodos = List([
 
 <p>ImmutableJS maps don’t work in the same way as JavaScript’s objects, so we’ll need to make some slight tweaks to our components. Anywhere there was a property access before (e.g. todo.id) needs to become a method call instead (todo.get('id')).</p>
 
-<h3>Designing Actions</h3>
+
+<h3>设计Actions</h3>
+
 <p>Now that we’ve got the shape and structure figured out, we can start thinking about the actions that will update it. In this case, we’ll only need two actions, one to add a new todo and the other to toggle an existing one.</p>
 
-<p>Let’s define some functions to create these actions.</p>
+<p>定义几个函数来实现这些Actions</p>
 
 <blockquote>
 // src/actions.js
-
 // succinct hack for generating passable unique ids
 const uid = () => Math.random().toString(34).slice(2);
 
@@ -228,19 +280,20 @@ export function toggleTodo(id) {
   }
 }
 </blockquote>
+
 Each action is just a JavaScript object with a type and payload properties. The type property helps us decide what to do with the payload when we process the action later.
 
-Designing a Reducer
-Now that we know the shape of our state and the actions that update it, we can build our reducer. Just as a reminder, the reducer is a function which takes a state and an action, then uses them to compute a new state.
+<h3>设计 a Reducer<h3>
 
-Here’s the initial structure for our reducer.
+<p>Now that we know the shape of our state and the actions that update it, we can build our reducer. Just as a reminder, the reducer is a function which takes a state and an action, then uses them to compute a new state.</p>
+
+<p>reducer的初始化结构如下<p>
+
 <blockquote>
 // src/reducer.js
-
 import { List, Map } from 'immutable';
 
 const init = List([]);
-
 export default function(todos=init, action) {
   switch(action.type) {
     case 'ADD_TODO':
@@ -252,13 +305,19 @@ export default function(todos=init, action) {
   }
 }
 </blockquote>
-Handling the ADD_TODO action is quite simple, as we can use the .push() method, which will return a new list with the todo appended at the end.
 
+
+<p>处理ADD_TODO Action非常简单，只需要用.push()方法，给我们返回一个缀有todo的新数组。</p>
+
+<blockquote>
 case 'ADD_TODO':
   return todos.push(Map(action.payload));
+</blockquote>
+
 Notice that we’re also converting the todo object into an immutable map before it’s pushed onto the list.
 
-The more complex action we need to handle is TOGGLE_TODO.
+TOGGLE_TODO处理起来更复杂。
+
 <blockquote>
 case 'TOGGLE_TODO':
   return todos.map(t => {
@@ -269,15 +328,22 @@ case 'TOGGLE_TODO':
     }
   });
 </blockquote>
+
 We’re using .map() to iterate over the list and find the todo whose id matches the action. Then we call .update() method, which takes a key and a function, then it returns a new copy of the map, with the value at the key replaced with the result of passing the initial value to the update function.
 
-It might help to see the literal version.
+我们用.map()方法遍历列表，找出
 
+It might help to see the literal version.
+<blockquote>
 const todo = Map({ id: 0, text: 'foo', isDone: false });
 todo.update('isDone', isDone => !isDone);
 // => { id: 0, text: 'foo', isDone: true }
+</blockquote>
+
 Connecting Everything
+链接所有
 Now we’ve got our actions and reducer ready, we can create a store and connect it to our React components.
+
 <blockquote>
 // src/app.js
 
@@ -294,9 +360,11 @@ render(
   document.getElementById('app')
 );
 </blockquote>
-We’ll need to make our components aware of this store. We’ll use the react-redux to help simplify this process. It allows us to create store-aware containers that wrap around our components, so that we don’t have to change our original implementations.
+<p>
+We’ll need to make our components aware of this store. We’ll use the react-redux to help simplify this process. It allows us to create store-aware containers that wrap around our components, so that we don’t have to change our original implementations.</p>
 
-We’re going to need a container around our <TodoList /> component. Let’s see what this looks like.
+<p>We’re going to need a container around our <TodoList /> component. Let’s see what this looks like.</p>
+
 <blockquote>
 // src/containers.js
 
@@ -313,9 +381,11 @@ export const TodoList = connect(
   }
 )(components.TodoList);
 </blockquote>
-We create containers with the connect function. When we call connect() we pass two functions, mapStateToProps() and mapDispatchToProps().
+<p>
+We create containers with the connect function. When we call connect() we pass two functions, mapStateToProps() and mapDispatchToProps().</p>
+<p>
+The mapStateToProps function takes the store’s current state as an argument (in our case a list of todos), then it expects the return value to be an object that describes a mapping from that state to props for our wrapped component.</p>
 
-The mapStateToProps function takes the store’s current state as an argument (in our case a list of todos), then it expects the return value to be an object that describes a mapping from that state to props for our wrapped component.
 <blockquote>
 function mapStateToProps(state) {
   return { todos: state };
@@ -325,6 +395,7 @@ It might help to visualize this on an instance of the wrapped React component.
 <blockquote>
 <TodoList todos={state} />
 </blockquote>
+
 We’ll also need to supply a mapDispatchToProps function, which is passed the store’s dispatch method, so that we can use it to dispatch the actions from our action creators.
 
 function mapDispatchToProps(dispatch) {
@@ -333,13 +404,16 @@ function mapDispatchToProps(dispatch) {
     toggleTodo: id => dispatch(toggleTodo(id))
   };
 }
+
 Again, it might help to visualize all these props together on an instance of our wrapped React component.
 <blockquote>
 <TodoList todos={state}
           addTodo={text => dispatch(addTodo(text))}
           toggleTodo={id => dispatch(toggleTodo(id))} />
 </blockquote>
+
 Now that we’ve mapped our component knows about the action creators, we can call them from event listeners.
+
 <blockquote>
 export function TodoList(props) {
   const { todos, toggleTodo, addTodo } = props;
@@ -377,9 +451,10 @@ export function TodoList(props) {
   );
 }
 </blockquote>
-The containers will automatically subscribe to changes in the store and they will re-render the wrapped components whenever their mapped props change.
+<p>
+The containers will automatically subscribe to changes in the store and they will re-render the wrapped components whenever their mapped props change.<p>
 
-Finally, we need to make the containers aware of the store, using the <Provider /> component.
+<p>Finally, we need to make the containers aware of the store, using the <Provider /> component.</p>
 <blockquote>
 // src/app.js
 
