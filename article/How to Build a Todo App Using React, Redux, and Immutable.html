@@ -177,14 +177,9 @@ export function TodoList(props) {
 }
 </blockquote>
 
-<p>At this point, we can test these components by creating an index.html file in the project folder and populating it with the following markup. (You can find a simple stylesheet here on GitHub).</p>
-
-<p>
-  这里，我们创建一个index.html文件来测试这些组件。
-</p>
+<p>这里，我们在项目文件夹中创建一个index.html文件来测试这些组件。</p>
 
 <blockquote>
-
 <!DOCTYPE html>
 <html>
   <head>
@@ -196,7 +191,6 @@ export function TodoList(props) {
     <script src="bundle.js"></script>
   </body>
 </html>
-
 </blockquote>
 
 <p>We’ll also need an application entry point at src/app.js.</p>
@@ -228,7 +222,7 @@ Compile the code with npm run build, then navigate your browser to the index.htm
 
 <p>Now that we’re happy with the user interface, we can start to think about the state behind it. 
   
-  Our dummy data is a great place to start from and we can easily translate it into ImmutableJS collections.</p>
+  Our dummy data模拟数据 is a great place to start from and we can easily translate将其转化成为 it into ImmutableJS collections.ImmutableJS集合</p>
 <p>现在我们看到这个用户界面很高兴，我们开始思考这些界面背后的state,从模拟数据开始，来思考如何转化成ImmutableJS集合</p>
 
 <blockquote>
@@ -242,7 +236,7 @@ const dummyTodos = List([
 ]);
 </blockquote>
 
-<p>ImmutableJS maps don’t work in the same way as JavaScript’s objects, so we’ll need to make some slight tweaks to our components. Anywhere there was a property access before (e.g. todo.id) needs to become a method call instead (todo.get('id')).</p>
+<p>ImmutableJS maps don’t work in the same way as JavaScript’s objects,跟JS对象的工作机制不一样， so we’ll need to make some slight tweaks to our components.所以我们需要对组件进行略微的调整。 Anywhere there was a property access before (e.g. todo.id) needs to become a method call instead (todo.get('id')).在使用任何属性（比如todo.id）之前，我们需要调用一个方法（比如（todo.get('id')））</p>
 
 
 <h3>设计Actions</h3>
