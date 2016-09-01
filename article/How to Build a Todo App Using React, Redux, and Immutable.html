@@ -1,5 +1,3 @@
-<html>
-<head>
 	<meta charset="utf-8">
 	<style>
 		body{
@@ -27,7 +25,6 @@
 
 
 <h2>如何用Redux,React和Immutable.js搭建一个最简单的Todo应用</h2>
-
 <em>By Dan Prince  May 03, 2016
     <a href="https://www.sitepoint.com/how-to-build-a-todo-app-using-react-redux-and-immutable-js/">原文</a>
     翻译：王德军，转载注明出处。
@@ -69,7 +66,7 @@ At the core of a Redux store is a function that takes the current application st
 <h3>ImmutableJS</h3>
 <p>Because Redux doesn’t allow us to mutate the application state, it can be helpful to enforce this by modeling application state with immutable data structures.</p>
 <p>
-  因为Redux不允许我们改变state，强制使用不可变数据结构
+  因为Redux不允许我们直接操作state，强制使用不可变数据结构
 </p>
 
 <p>ImmutableJS offers us a number of immutable data structures with mutative interfaces and they’re implemented in an efficient way, inspired by the implementations in Clojure and Scala.</p>
@@ -467,6 +464,7 @@ render(
 There’s no denying that the ecosystem around React and Redux can be quite complex and intimidating for beginners, but the good news is that almost all of these concepts are transferable. We’ve barely touched the surface of Redux’s architecture, but already we’ve seen enough to help us start learning about The Elm Architecture, or pick up a ClojureScript library like Om or Re-frame. Likewise, we’ve only seen a fragment of the possibilities with immutable data, but now we’re better equipped to start learning a language like Clojure or Haskell.
 
 Whether you’re just exploring the state of web application development, or you spend all day writing JavaScript; experience with action based architectures and immutable data is already becoming a vital skill for developers and right now is a great time to be learning the essentials.
+以action和不可变数据为基础的编程方式逐渐成为
 </div>
 </body>
 </html>
