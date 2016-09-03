@@ -42,7 +42,7 @@
 <p>Whilst there’s no official solution for dealing with application state, there are some libraries that align particularly well with React’s paradigm. Today we’ll pair React with two such libraries and use them to build a simple application.</p>
 
 <p>
-  没有现成的官方解决方案，
+  没有现成的官方解决方案，管理状态，函数库，用它们来建立一个简单的小应用。
 </p>
 <h3>Redux</h3>
 <p>Redux is a tiny library that acts as a container for our application state, by combining ideas from Flux and Elm. We can use Redux to manage any kind of application state, providing we stick to the following guidelines:</p>
@@ -51,12 +51,11 @@
   Redux是一个轻量级JS库，用以保存state的容器，结合了Flux和Elm的思想。我们可以使用Redux管理任何一个应用的state。只要我们坚持下面的三条原则。
 </p>
 <ul>
-Our state is kept in a single store
 1.所有state保存在一个store里
 Changes come from actions not mutations
 2.交互动作才能改变状态
 At the core of a Redux store is a function that takes the current application state and an action and combines them to create a new application state. We call this function a reducer.
-一个Redux store的核心就是一个函数，接收应用当前的state和一个交互动作，并产生一个新的state
+一个Redux store的核心就是一个函数，接收应用当前的state和一个action，并产生一个新的state
 </ul>
 <p>Our React components will be responsible for sending actions to our store and in turn our store will tell the components when they need to re-render.</p>
 <p>
@@ -66,22 +65,23 @@ At the core of a Redux store is a function that takes the current application st
 <h3>ImmutableJS</h3>
 <p>Because Redux doesn’t allow us to mutate the application state, it can be helpful to enforce this by modeling application state with immutable data structures.</p>
 <p>
-  因为Redux不允许我们直接操作state，强制使用不可变数据结构
+  因为Redux不允许我们直接操作state，强制使用不可变数据结构是一个显然是更好的选择。
 </p>
 
 <p>ImmutableJS offers us a number of immutable data structures with mutative interfaces and they’re implemented in an efficient way, inspired by the implementations in Clojure and Scala.</p>
 
-<p>Immutable 提供给我们一系列不可变数据结构with mutative interfaces and 用一种高效的方式来实现的。受到了Clojure和Scala的启发</p>
+<p>Immutable 提供给我们一系列不可变数据结构with mutative 接口 and 用一种高效的方式来实现的。受到了Clojure和Scala的启发</p>
 
 <h3>Demo</h3>
 <p>We’re going to use React with Redux and ImmutableJS to build a simple todo list that allows us to add todos and toggle them between complete and incomplete.</p>
-
+我们将使用Redux和ImmutableJS配合React搭建一个小型的Todo应用，在这个应用里，允许我们创建新的Todo项目，并且能够标记事项是否已经完成。
 
 <p>The code is also available on GitHub.</p>
-
+在Github上也可以获取本项目的源代码。
 <h3>Setup</h3>
 <p>We’ll get started by creating a project folder and initializing a package.json file with npm init. Then we’ll install that dependencies that we’re going to need.</p>
 
+我们将撞见一个项目文件夹，用npm init初始化一个package.json。
 <blockquote>
 npm install --save react react-dom redux react-redux immutable
 npm install --save-dev webpack babel-loader babel-preset-es2015 babel-preset-react
@@ -129,7 +129,7 @@ We’ll need to run npm run build each time we want to compile our code.
 <p>Before we implement any components, it can be helpful to create some dummy data. This helps us get a feel for what we’re going to need our components to render.></p>
 
 <p>
-  在我们创建组件之前，可以先模拟一组假数据，以便知道组件会渲染什么样的数据。
+  在我们组件之前，可以先模拟一组假数据，以便知道组件会渲染什么样的数据。
 <p>
 
 <blockquote>
@@ -214,7 +214,7 @@ render(
 </blockquote>
 
 Compile the code with npm run build, then navigate your browser to the index.html file and make sure that it’s working.
-
+使用npm build命令转译这些代码，在你的浏览器查看一下index.html文件，确保是OK的。
 <h3>Redux & ImmutableJS</h3>
 
 <p>Now that we’re happy with the user interface, we can start to think about the state behind it. 
